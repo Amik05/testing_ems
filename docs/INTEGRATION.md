@@ -2,12 +2,18 @@
 
 This document defines how the masters student connects a shape completion method to the EMS pipeline.
 
+## Input layout
+
+| Folder | Purpose |
+|--------|---------|
+| `data/vendor/single/` | EMS demo clouds (partial/noisy examples) |
+| `data/vendor/multi/` | EMS demo clouds (cat, dog, turtle) |
+| `data/partial/` | Your partial-view clouds (before completion) |
+| `data/completed/` | Your shape-completion outputs |
+
+See [`data/README.md`](../data/README.md) for details.
+
 ## Input formats
-
-Place point clouds in:
-
-- `data/partial/` — raw or partial-view clouds (before completion)
-- `data/completed/` — shape completion outputs
 
 Supported file types:
 
@@ -23,9 +29,11 @@ Requirements:
 - At least 11 points
 - Coordinates in meters (or consistent unit across partial and completed pairs)
 
-## Experiment manifest
+## Manifest (optional)
 
-Register object pairs in [`config/experiment.yaml`](../config/experiment.yaml):
+If you don’t want to use folder convention (`data/<object_id>/partial.ply` and `completed.ply`), create your own manifest YAML and pass it to `run.py --manifest <path>`.
+
+Example `manifest.yaml`:
 
 ```yaml
 objects:
@@ -33,6 +41,36 @@ objects:
     partial: data/partial/mug_01.ply
     completed: data/completed/mug_01.ply
     fit_mode: single   # or hierarchical
+```
+
+Primary single-entry command:
+
+```bash
+python run.py --partial data/partial/mug_01.ply --completed data/completed/mug_01.ply --mode single
+```
+
+Primary batch command (manifest mode):
+
+```bash
+python run.py --batch data --manifest path/to/manifest.yaml
+```
+
+You can also use folder convention without a manifest:
+
+```text
+data/
+├── mug_01/
+│   ├── partial.ply
+│   └── completed.ply
+├── mug_02/
+│   ├── partial.ply
+│   └── completed.ply
+```
+
+then run:
+
+```bash
+python run.py --batch data
 ```
 
 ## Output format
@@ -71,29 +109,30 @@ Each fit produces `superquadrics.json`:
 ```
 
 ## Commands
-
 ```bash
-pixi run fit -- data/completed/mug_01.ply -o results/mug_01.json --mode single
-pixi run ablation
+python run.py --partial data/partial/mug_01.ply --completed data/completed/mug_01.ply --mode single
+python run.py --batch data
 ```
 
 Ablation outputs:
 
-- `results/ablation/<object_id>/partial.json`
-- `results/ablation/<object_id>/completed.json`
-- `results/ablation/ablation_summary.csv`
-- `results/ablation/report.md`
+- `results/batch/<object_id>/partial.json`
+- `results/batch/<object_id>/completed.json`
+- `results/batch/<object_id>/results.json`
+- `results/batch/summary.csv`
 
 ## Thesis workflow
 
 1. Student generates `data/completed/*.ply` from their completion method.
-2. Update `config/experiment.yaml` with object pairs.
-3. Run `pixi run ablation`.
-4. Compare `chamfer`, `mean_point_to_surface`, and downstream proxy columns in the CSV.
+2. Either:
+   - use per-object folder convention and run `python run.py --batch data`, or
+   - create your own manifest YAML and pass it via `--manifest`.
+3. Compare `delta_fit_error`, `delta_chamfer`, and `delta_coverage` from each object's `results.json`.
+4. Use `results/batch/summary.csv` for aggregate reporting.
 5. Run full robot grasp/planning evaluation using exported superquadric parameters.
 
 ## Notes
 
-- Do not duplicate EMS internal preprocessing (centering/rescale) — configure via `config/ems_default.yaml`.
+- Do not duplicate EMS internal preprocessing (centering/rescale) — configure via `config/params.yaml`.
 - Use `fit_mode: hierarchical` for multi-part objects (bottles, animals); `single` for simple primitives.
 - If completion outputs a mesh, sample the surface to a point cloud before fitting.

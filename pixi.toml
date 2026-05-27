@@ -19,9 +19,9 @@ pip = "*"
 [tasks]
 install-ems = "pip install -e vendor/EMS-superquadric_fitting/Python --no-deps"
 reproduce = { cmd = "python scripts/reproduce_paper_demo.py", depends-on = ["install-ems"] }
-fit = { cmd = "python scripts/fit_cloud.py", depends-on = ["install-ems"] }
-ablation = { cmd = "python scripts/run_ablation.py", depends-on = ["install-ems"] }
 visualize = "python scripts/visualize_fit.py"
+run-single = { cmd = "python run.py --partial data/vendor/single/partial_pointCloud_example_1.ply --completed data/vendor/single/partial_pointCloud_example_1.ply --mode single", depends-on = ["install-ems"] }
+run-batch = { cmd = "python run.py --batch data", depends-on = ["install-ems"] }
 
 [pypi-dependencies]
 ems-bridge = { path = ".", editable = true }

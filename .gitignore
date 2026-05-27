@@ -5,7 +5,12 @@ __pycache__/
 .eggs/
 dist/
 build/
-data/
+# Student experiment clouds (local, not committed)
+data/partial/*
+data/completed/*
+!data/partial/.gitkeep
+!data/completed/.gitkeep
+
 results/
 *.npy
 *.npz

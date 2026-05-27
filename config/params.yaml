@@ -1,0 +1,48 @@
+input:
+  partial_filename: "partial.ply"
+  completed_filename: "completed.ply"
+
+preprocessing:
+  voxel_size: null
+  target_n_points: 1500
+  target_n_points_multi: 5000
+  sor_enabled: true
+  sor_nb_neighbors: 20
+  sor_std_ratio: 2.0
+
+ems:
+  # Single SQ defaults
+  single_outlier_ratio: 0.2
+  single_max_iteration_em: 20
+  single_tolerance_em: 1.0e-3
+  single_relative_tolerance_em: 0.1
+  single_max_opti_iterations: 3
+  single_sigma: 0.0
+  single_max_switch: 2
+  single_adaptive_upper_bound: false
+  single_rescale: true
+
+  # Hierarchical defaults
+  OutlierRatio: 0.9
+  MaxIterationEM: 20
+  ToleranceEM: 1.0e-3
+  RelativeToleranceEM: 0.2
+  MaxOptiIterations: 2
+  Sigma: 0.3
+  MaxiSwitch: 2
+  AdaptiveUpperBound: true
+  Rescale: false
+  MaxLayer: 5
+  MinPoints: 20
+  eps_scale: 0.1
+  inlier_threshold: 0.1
+  outlier_cluster_threshold: 0.9
+
+output:
+  results_dir: "results"
+  save_visual_ply: true
+  sq_surface_n_points: 500
+  surface_sample_arclength: 0.02
+  surface_sample_interval: 0.1
+  grasp_width_ratio: 0.6
+  planning_clearance_margin: 0.01

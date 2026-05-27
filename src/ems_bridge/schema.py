@@ -63,3 +63,39 @@ class FitResult:
         if self.downstream is not None:
             payload["downstream"] = self.downstream.to_dict()
         return payload
+
+
+@dataclass
+class ArmSummary:
+    n_points_input: int
+    n_points_after_preproc: int
+    n_primitives: int
+    total_coverage: float
+    mean_fit_error: float
+    chamfer: float
+    elapsed_s: float
+    result_json: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class ComparisonResult:
+    object: str
+    partial: ArmSummary
+    completed: ArmSummary
+    delta_coverage: float
+    delta_fit_error: float
+    delta_chamfer: float
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = {
+            "object": self.object,
+            "partial": self.partial.to_dict(),
+            "completed": self.completed.to_dict(),
+            "delta_coverage": self.delta_coverage,
+            "delta_fit_error": self.delta_fit_error,
+            "delta_chamfer": self.delta_chamfer,
+        }
+        return payload

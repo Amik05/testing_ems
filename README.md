@@ -2,7 +2,7 @@
 
 Reproducible pipeline for [EMS superquadric fitting](https://arxiv.org/abs/2111.14517) (Liu et al., CVPR 2022), designed to compare partial vs shape-completed point clouds before downstream grasp/planning evaluation.
 
-**macOS-friendly:** Python + pixi only — no ROS required.
+Python + pixi only — no ROS required.
 
 ## Quick start
 
@@ -13,11 +13,14 @@ pixi install
 # Baseline sanity check on vendor sample PLYs
 pixi run reproduce
 
-# Fit a single cloud
-pixi run fit -- path/to/cloud.ply -o results/out.json --mode single
+# Single-entry: compare one partial/completed pair
+python run.py --partial data/partial/mug_01.ply --completed data/completed/mug_01.ply --mode single
 
-# Batch ablation (partial vs completed)
-pixi run ablation
+# Batch compare from folder convention
+python run.py --batch data
+
+# (Optional) If you use a different folder layout, you can pass your own manifest:
+# python run.py --batch data --manifest path/to/manifest.yaml
 
 # Visualize a fit
 pixi run visualize -- path/to/cloud.ply results/out.json -o results/viz.png
@@ -26,11 +29,15 @@ pixi run visualize -- path/to/cloud.ply results/out.json -o results/viz.png
 ## Project layout
 
 ```
-config/           YAML parameters and experiment manifest
+config/           params.yaml (primary) + compatibility configs
+data/             Point cloud inputs (see data/README.md)
+  vendor/         Demo PLYs from EMS paper repo (committed)
+  partial/        Student partial-view clouds (gitignored)
+  completed/      Student completion outputs (gitignored)
 docs/             Integration contract for the student
 scripts/          CLI entry points
 src/ems_bridge/   Preprocess, fit, metrics, I/O wrappers
-vendor/           Official EMS-superquadric_fitting repo
+vendor/           Official EMS-superquadric_fitting Python package
 results/          Generated outputs (gitignored)
 ```
 
@@ -38,7 +45,7 @@ results/          Generated outputs (gitignored)
 
 ### Preprocessing
 
-EMS internally centers, optionally rescales, and initializes via PCA. This pipeline adds optional voxel downsampling and statistical outlier removal **before** calling EMS. See `config/ems_default.yaml`.
+EMS internally centers, optionally rescales, and initializes via PCA. This pipeline adds optional voxel downsampling and statistical outlier removal **before** calling EMS. See `config/params.yaml`.
 
 ### Point count
 
@@ -51,6 +58,45 @@ Automatic via hierarchical EMS (`fit_mode: hierarchical`). Controlled by `max_la
 ## Student integration
 
 See [docs/INTEGRATION.md](docs/INTEGRATION.md) for the file-based contract.
+
+## Output schema
+
+Per object, the single-entry pipeline writes:
+
+- `partial.json` and `completed.json` (raw arm-level EMS outputs)
+- `results.json` (consolidated comparison with deltas)
+- optional `partial_visual.ply` and `completed_visual.ply` (colored overlays)
+
+Example consolidated shape:
+
+```json
+{
+  "object": "mug_01",
+  "partial": {
+    "n_points_input": 4821,
+    "n_points_after_preproc": 1024,
+    "n_primitives": 2,
+    "total_coverage": 0.71,
+    "mean_fit_error": 0.0043,
+    "chamfer": 0.0031,
+    "elapsed_s": 1.2,
+    "result_json": "results/mug_01/partial.json"
+  },
+  "completed": {
+    "n_points_input": 8302,
+    "n_points_after_preproc": 1024,
+    "n_primitives": 3,
+    "total_coverage": 0.89,
+    "mean_fit_error": 0.0021,
+    "chamfer": 0.0020,
+    "elapsed_s": 1.4,
+    "result_json": "results/mug_01/completed.json"
+  },
+  "delta_coverage": 0.18,
+  "delta_fit_error": -0.0022,
+  "delta_chamfer": -0.0011
+}
+```
 
 ## Role split
 

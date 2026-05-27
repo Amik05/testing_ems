@@ -18,9 +18,5 @@ dependencies = [
     "matplotlib>=3.7",
 ]
 
-[project.scripts]
-ems-fit = "ems_bridge.cli:fit_main"
-ems-ablation = "ems_bridge.cli:ablation_main"
-
 [tool.setuptools.packages.find]
 where = ["src"]

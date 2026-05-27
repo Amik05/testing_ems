@@ -15,12 +15,12 @@ from ems_bridge.fit import fit_point_cloud
 from ems_bridge.io import load_point_cloud, save_fit_result
 from ems_bridge.metrics import compute_fit_metrics
 
-VENDOR_DATA = ROOT / "vendor" / "EMS-superquadric_fitting" / "MATLAB" / "example_scripts" / "data"
+DATA = ROOT / "data" / "vendor"
 
 SAMPLES = [
-    ("single", VENDOR_DATA / "single_superquadric" / "noisy_pointCloud_example_1.ply"),
-    ("single", VENDOR_DATA / "single_superquadric" / "partial_pointCloud_example_1.ply"),
-    ("hierarchical", VENDOR_DATA / "multi_superquadrics" / "dog.ply"),
+    ("single", DATA / "single" / "noisy_pointCloud_example_1.ply"),
+    ("single", DATA / "single" / "partial_pointCloud_example_1.ply"),
+    ("hierarchical", DATA / "multi" / "dog.ply"),
 ]
 
 

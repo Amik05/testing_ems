@@ -19,9 +19,14 @@ def fit_point_cloud(
     config: dict[str, Any],
     fit_mode: str = "single",
     source_cloud: str = "",
+    apply_preprocess: bool = True,
 ) -> FitResult:
     hierarchical = fit_mode == "hierarchical"
-    processed = preprocess_point_cloud(points, config, hierarchical=hierarchical)
+    processed = (
+        preprocess_point_cloud(points, config, hierarchical=hierarchical)
+        if apply_preprocess
+        else np.asarray(points, dtype=float)
+    )
 
     start = time.perf_counter()
     if hierarchical:
@@ -35,6 +40,21 @@ def fit_point_cloud(
         fit_mode=fit_mode,
         fit_time_ms=elapsed_ms,
         superquadrics=superquadrics,
+    )
+
+
+def fit_preprocessed_point_cloud(
+    processed_points: np.ndarray,
+    config: dict[str, Any],
+    fit_mode: str = "single",
+    source_cloud: str = "",
+) -> FitResult:
+    return fit_point_cloud(
+        np.asarray(processed_points, dtype=float),
+        config,
+        fit_mode=fit_mode,
+        source_cloud=source_cloud,
+        apply_preprocess=False,
     )
 
 
