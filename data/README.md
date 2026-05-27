@@ -44,7 +44,7 @@ Create your own manifest YAML and pass it via `--manifest <path>`.
 
 ## Refreshing vendor samples
 
-If you update the EMS submodule, recopy demos:
+If you update the vendored EMS copy, recopy demos:
 
 ```bash
 cp vendor/EMS-superquadric_fitting/MATLAB/example_scripts/data/single_superquadric/*.ply data/vendor/single/
