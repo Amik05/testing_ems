@@ -1,0 +1,14 @@
+.pixi/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+data/
+results/
+*.npy
+*.npz
+.DS_Store
+.venv/
+venv/

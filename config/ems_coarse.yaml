@@ -1,0 +1,43 @@
+preprocess:
+  voxel_size: null
+  target_points: 1500
+  target_points_multi: 5000
+  statistical_outlier:
+    enabled: false
+    nb_neighbors: 20
+    std_ratio: 2.0
+
+ems_single:
+  outlier_ratio: 0.2
+  max_iteration_em: 20
+  tolerance_em: 1.0e-3
+  relative_tolerance_em: 0.1
+  max_opti_iterations: 3
+  sigma: 0.0
+  max_switch: 2
+  adaptive_upper_bound: false
+  rescale: true
+
+ems_hierarchical:
+  max_layer: 3
+  min_points: 60
+  eps_scale: 0.17
+  outlier_ratio: 0.9
+  max_iteration_em: 20
+  tolerance_em: 1.0e-3
+  relative_tolerance_em: 0.2
+  max_opti_iterations: 2
+  sigma: 0.3
+  max_switch: 2
+  adaptive_upper_bound: true
+  rescale: false
+  inlier_threshold: 0.1
+  outlier_cluster_threshold: 0.8
+
+metrics:
+  surface_sample_arclength: 0.02
+  surface_sample_interval: 0.1
+
+downstream:
+  grasp_width_ratio: 0.6
+  planning_clearance_margin: 0.01

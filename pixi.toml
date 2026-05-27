@@ -1,0 +1,27 @@
+[workspace]
+name = "testing_ems"
+version = "0.1.0"
+description = "EMS superquadric fitting bridge for shape completion experiments"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "osx-64", "linux-64"]
+
+[dependencies]
+python = "3.11.*"
+numpy = ">=1.24"
+scipy = ">=1.10"
+numba = ">=0.57"
+scikit-learn = ">=1.3"
+plyfile = ">=0.9"
+pyyaml = ">=6.0"
+matplotlib = ">=3.7"
+pip = "*"
+
+[tasks]
+install-ems = "pip install -e vendor/EMS-superquadric_fitting/Python --no-deps"
+reproduce = { cmd = "python scripts/reproduce_paper_demo.py", depends-on = ["install-ems"] }
+fit = { cmd = "python scripts/fit_cloud.py", depends-on = ["install-ems"] }
+ablation = { cmd = "python scripts/run_ablation.py", depends-on = ["install-ems"] }
+visualize = "python scripts/visualize_fit.py"
+
+[pypi-dependencies]
+ems-bridge = { path = ".", editable = true }
